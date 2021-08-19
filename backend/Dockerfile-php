@@ -13,14 +13,13 @@ RUN apk add \
 # Куда же без composer'а.
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-ENV ENV_TYPE=$ENV_TYPE
-
 # Добавим свой php.ini, можем в нем определять свои значения конфига
-COPY php.ini.$ENV_TYPE /usr/local/etc/php/conf.d/40-custom.ini
+COPY ./php.ini.$ENV_TYPE /usr/local/etc/php/conf.d/40-custom.ini
 
 # Копируем исходники в контейнер
 COPY ./api /var/www/api
 
+ENV ENV_TYPE=$ENV_TYPE
 ENV DB_HOST=$DB_HOST
 ENV DB_USERNAME=$DB_USERNAME
 ENV DB_PASSWORD=$DB_PASSWORD
