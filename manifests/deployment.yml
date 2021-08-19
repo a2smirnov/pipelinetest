@@ -1,19 +1,97 @@
 apiVersion : apps/v1
 kind: Deployment
 metadata:
-  name: "ascicdk8s-1a18"
+  name: fe-nginx
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: "ascicdk8s-1a18"
+      app: fe-nginx
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
   template:
     metadata:
       labels:
-        app: "ascicdk8s-1a18"
+        app: fe-nginx
     spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
       containers:
-        - name: "ascicdk8s-1a18"
-          image: "ascicdacr.azurecr.io/ascicdk8s"
+        - name: "fe-nginx"
+          image: "ascicdacr.azurecr.io/fe-nginx"
           ports:
           - containerPort: 80
+          resources:
+            requests:
+              cpu: 250m
+            limits:
+              cpu: 500m
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: be-php
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: be-php
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: be-php
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: be-php-prod
+        image: "ascicdacr.azurecr.io/be-php"
+        ports:
+        - containerPort: 9000
+          name: php
+        resources:
+          requests:
+            cpu: 250m
+          limits:
+            cpu: 500m
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: be-nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: be-nginx
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: be-nginx
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: be-nginx-prod
+        image: "ascicdacr.azurecr.io/be-nginx"
+        ports:
+        - containerPort: 80
+          name: backend-nginx
+        resources:
+          requests:
+            cpu: 250m
+          limits:
+            cpu: 500m

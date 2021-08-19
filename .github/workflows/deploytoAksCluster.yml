@@ -11,14 +11,30 @@ jobs:
         username: ${{ secrets.acr_ascicdacr_username }}
         password: ${{ secrets.acr_ascicdacr_password }}
     
-    - name: Build and push image to ACR
-      id: build-image
+    - name: Build and push frintend image to ACR
+      id: build-image1
       run: |
-        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/ascicdk8s:${{ github.sha }} --label dockerfile-path=frontend/Dockerfile
+        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/fe-nginx:${{ github.sha }} --label dockerfile-path=frontend/Dockerfile
         docker push ascicdacr.azurecr.io/ascicdk8s:${{ github.sha }}
       env:
         ENV_TYPE: prod
-    
+    - name: Build and push backend nginx image to ACR
+      id: build-image2
+      run: |
+        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/be-nginx:${{ github.sha }} --label dockerfile-path=backend/Dockerfile-nginx
+        docker push ascicdacr.azurecr.io/ascicdk8s:${{ github.sha }}
+      env:
+        ENV_TYPE: prod
+    - name: Build and push backend php image to ACR
+      id: build-image3
+      run: |
+        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/be-php:${{ github.sha }} --label dockerfile-path=backend/Dockerfile-php
+        docker push ascicdacr.azurecr.io/ascicdk8s:${{ github.sha }}
+      env:
+        ENV_TYPE: prod
+        DB_HOST: as-cicd-dbserver.mysql.database.azure.com
+        DB_NAME: api_db
+
     - uses: azure/k8s-set-context@v1
       with:
          kubeconfig: ${{ secrets.aks_ascicdk8s_kubeConfig }}
@@ -48,6 +64,8 @@ jobs:
           manifests/service.yml
           manifests/ingress.yml
         images: |
-          ascicdacr.azurecr.io/ascicdk8s:${{ github.sha }}
+          ascicdacr.azurecr.io/fe-nginx:${{ github.sha }}
+          ascicdacr.azurecr.io/be-nginx:${{ github.sha }}
+          ascicdacr.azurecr.io/be-php:${{ github.sha }}
         imagepullsecrets: |
           ascicdk8sdockerauth

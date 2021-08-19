@@ -1,17 +1,30 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-    name: "ascicdk8s-1a18"
-    labels:
-        app: "ascicdk8s-1a18"
-    annotations:
-        kubernetes.io/ingress.class: addon-http-application-routing
+  name: webrouter
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+    appgw.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
-    rules:
-        - host: pipeline-ascicdk8s-1a18.db51c362f6e44b069ddb.westeurope.aksapp.io
-          http:
-            paths:
-            - path: /
-              backend:
-                serviceName: "ascicdk8s-1a18"
-                servicePort: 80
+  defaultBackend:
+    service:
+      name: fe-nginx
+      port:
+        number: 80
+  rules:
+    - http:
+        paths:
+          - path: /trackerdata/
+            pathType: ImplementationSpecific
+            backend:
+                service:
+                  name: be-nginx
+                  port:
+                    number: 8080
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+                service:
+                  name: fe-nginx
+                  port:
+                    number: 80
