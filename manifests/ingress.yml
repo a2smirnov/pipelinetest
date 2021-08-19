@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+    name: "ascicdk8s-1a18"
+    labels:
+        app: "ascicdk8s-1a18"
+    annotations:
+        kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+    rules:
+        - host: pipeline-ascicdk8s-1a18.db51c362f6e44b069ddb.westeurope.aksapp.io
+          http:
+            paths:
+            - path: /
+              backend:
+                serviceName: "ascicdk8s-1a18"
+                servicePort: 80
