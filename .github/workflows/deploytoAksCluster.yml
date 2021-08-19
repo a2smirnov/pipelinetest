@@ -25,7 +25,8 @@ jobs:
       id: build-image3
       run: |
         docker build "$GITHUB_WORKSPACE/backend" -f  "backend/Dockerfile-php" -t ascicdacr.azurecr.io/be-php:${{ github.sha }} --label dockerfile-path=backend/Dockerfile-php \
-         --build-arg ENV_TYPE=prod DB_USERNAME=${{ secrets.db_username }} DB_PASSWORD=${{ secrets.db_password }} DB_HOST=as-cicd-dbserver.mysql.database.azure.com DB_NAME=api_db
+         --build-arg ENV_TYPE=prod --build-arg DB_USERNAME=${{ secrets.db_username }} --build-arg DB_PASSWORD=${{ secrets.db_password }} \
+         --build-arg DB_HOST=as-cicd-dbserver.mysql.database.azure.com --build-arg DB_NAME=api_db
         docker push ascicdacr.azurecr.io/be-php:${{ github.sha }}
 
     - uses: azure/k8s-set-context@v1
