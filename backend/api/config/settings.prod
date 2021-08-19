@@ -1,0 +1,17 @@
+[DB]
+table_name="covidcounter"
+engine="InnoDB"
+charset="UTF8MB4"
+
+[API]
+data_source="https://covidtrackerapi.bsg.ox.ac.uk/api/v2/stringency/date-range/"
+countries[]="RUS"
+countries[]="USA"
+countries[]="DEU"
+countries[]="GBR"
+countries[]="FRA"
+countries[]="ITA"
+countries[]="ISR"
+countries[]="TUR"
+countries[]="UKR"
+countries[]="BLR"
