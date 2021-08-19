@@ -18,8 +18,7 @@ jobs:
         docker push ascicdacr.azurecr.io/fe-nginx:${{ github.sha }}
       env:
         ENV_TYPE: prod
-      with:
-        args: '--build-arg ENV_TYPE=123'
+      args: '--build-arg ENV_TYPE=123'
     - name: Build and push backend nginx image to ACR
       id: build-image2
       run: |
