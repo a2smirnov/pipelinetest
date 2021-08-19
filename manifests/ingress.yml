@@ -12,8 +12,8 @@ spec:
       port:
         number: 80
   rules:
-    - host: pipeline-ascicdk8s-1a18.db51c362f6e44b069ddb.westeurope.aksapp.io
-      http:
+#    - host: pipeline-ascicdk8s-1a18.db51c362f6e44b069ddb.westeurope.aksapp.io
+    -  http:
         paths:
           - path: /trackerdata/
             pathType: ImplementationSpecific

@@ -11,13 +11,15 @@ jobs:
         username: ${{ secrets.acr_ascicdacr_username }}
         password: ${{ secrets.acr_ascicdacr_password }}
 
-    - name: Build and push frintend image to ACR
+    - name: Build and push frontend image to ACR
       id: build-image1
       run: |
         docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/fe-nginx:${{ github.sha }} --label dockerfile-path=frontend/Dockerfile
         docker push ascicdacr.azurecr.io/fe-nginx:${{ github.sha }}
       env:
         ENV_TYPE: prod
+      with:
+        args: '--build-arg ENV_TYPE=123'
     - name: Build and push backend nginx image to ACR
       id: build-image2
       run: |
