@@ -1,5 +1,5 @@
 FROM nginx:1.21.1-alpine
-ENV ENV_TYPE=$ENV_TYPE
+#ENV ENV_TYPE=$ENV_TYPE
 #убираем дефолтную конфигурацию
 RUN rm /etc/nginx/conf.d/default.conf
 #копируем конфигурацию NGINX

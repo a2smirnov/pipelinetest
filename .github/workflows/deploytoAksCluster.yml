@@ -4,13 +4,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    
+
     - uses: azure/docker-login@v1
       with:
         login-server: ascicdacr.azurecr.io
         username: ${{ secrets.acr_ascicdacr_username }}
         password: ${{ secrets.acr_ascicdacr_password }}
-    
+
     - name: Build and push frintend image to ACR
       id: build-image1
       run: |
@@ -41,7 +41,7 @@ jobs:
       with:
          kubeconfig: ${{ secrets.aks_ascicdk8s_kubeConfig }}
       id: login
-    
+
     - name: Create namespace
       run: |
         namespacePresent=`kubectl get namespace | grep pipeline | wc -l`
@@ -57,7 +57,7 @@ jobs:
         container-registry-username: ${{ secrets.acr_ascicdacr_username }}
         container-registry-password: ${{ secrets.acr_ascicdacr_password }}
         secret-name: ascicdk8sdockerauth
-       
+
     - uses: azure/k8s-deploy@v1.2
       with:
         namespace: pipeline
@@ -69,5 +69,5 @@ jobs:
           ascicdacr.azurecr.io/fe-nginx:${{ github.sha }}
           ascicdacr.azurecr.io/be-nginx:${{ github.sha }}
           ascicdacr.azurecr.io/be-php:${{ github.sha }}
-        imagepullsecrets: |
+        imagepullsecrets:
           ascicdk8sdockerauth
