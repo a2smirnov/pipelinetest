@@ -21,14 +21,14 @@ jobs:
     - name: Build and push backend nginx image to ACR
       id: build-image2
       run: |
-        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/be-nginx:${{ github.sha }} --label dockerfile-path=backend/Dockerfile-nginx
+        docker build "$GITHUB_WORKSPACE/backend" -f  "backeend/Dockerfile-nginx" -t ascicdacr.azurecr.io/be-nginx:${{ github.sha }} --label dockerfile-path=backend/Dockerfile-nginx
         docker push ascicdacr.azurecr.io/be-nginx:${{ github.sha }}
       env:
         ENV_TYPE: prod
     - name: Build and push backend php image to ACR
       id: build-image3
       run: |
-        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/be-php:${{ github.sha }} --label dockerfile-path=backend/Dockerfile-php
+        docker build "$GITHUB_WORKSPACE/backend" -f  "backend/Dockerfile-php" -t ascicdacr.azurecr.io/be-php:${{ github.sha }} --label dockerfile-path=backend/Dockerfile-php
         docker push ascicdacr.azurecr.io/be-php:${{ github.sha }}
       env:
         ENV_TYPE: prod
