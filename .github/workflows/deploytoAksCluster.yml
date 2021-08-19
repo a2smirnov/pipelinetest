@@ -1,0 +1,51 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: ascicdacr.azurecr.io
+        username: ${{ secrets.acr_ascicdacr_username }}
+        password: ${{ secrets.acr_ascicdacr_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/ascicdk8s:${{ github.sha }} --label dockerfile-path=frontend/Dockerfile
+        docker push ascicdacr.azurecr.io/ascicdk8s:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_ascicdk8s_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep pipeline | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace pipeline`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: pipeline
+        container-registry-url: ascicdacr.azurecr.io
+        container-registry-username: ${{ secrets.acr_ascicdacr_username }}
+        container-registry-password: ${{ secrets.acr_ascicdacr_password }}
+        secret-name: ascicdk8sdockerauth
+       
+    - uses: azure/k8s-deploy@v1.2
+      with:
+        namespace: pipeline
+        manifests: |
+          manifests/deployment.yml
+          manifests/service.yml
+          manifests/ingress.yml
+        images: |
+          ascicdacr.azurecr.io/ascicdk8s:${{ github.sha }}
+        imagepullsecrets: |
+          ascicdk8sdockerauth
