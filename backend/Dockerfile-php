@@ -22,8 +22,8 @@ COPY php.ini.$ENV_TYPE /usr/local/etc/php/conf.d/40-custom.ini
 COPY ./api /var/www/api
 
 ENV DB_HOST=$DB_HOST
-ENV DB_USERNAME=${{ secrets.DB_USERNAME }}
-ENV DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+ENV DB_USERNAME=$DB_USERNAME
+ENV DB_PASSWORD=$DB_PASSWORD
 ENV DB_NAME=$DB_NAME
 
 # Указываем рабочую директорию для PHP

@@ -32,6 +32,8 @@ jobs:
         docker push ascicdacr.azurecr.io/be-php:${{ github.sha }}
       env:
         ENV_TYPE: prod
+        DB_USERNAME: ${{ secrets.db_username }}
+        DB_PASSWORD: ${{ secrets.db_password }}
         DB_HOST: as-cicd-dbserver.mysql.database.azure.com
         DB_NAME: api_db
 
