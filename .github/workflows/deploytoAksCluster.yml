@@ -2,6 +2,8 @@ on: [push]
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      ENV_TYPE: prod
     steps:
     - uses: actions/checkout@master
     
