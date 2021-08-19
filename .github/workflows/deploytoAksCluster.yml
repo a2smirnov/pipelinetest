@@ -2,8 +2,6 @@ on: [push]
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    env:
-      ENV_TYPE: prod
     steps:
     - uses: actions/checkout@master
     
@@ -18,6 +16,8 @@ jobs:
       run: |
         docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/ascicdk8s:${{ github.sha }} --label dockerfile-path=frontend/Dockerfile
         docker push ascicdacr.azurecr.io/ascicdk8s:${{ github.sha }}
+      env:
+        ENV_TYPE: prod
     
     - uses: azure/k8s-set-context@v1
       with:
