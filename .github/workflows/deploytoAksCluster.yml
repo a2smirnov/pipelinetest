@@ -22,7 +22,7 @@ jobs:
     - name: Build and push frontend image to ACR
       id: build-image1
       run: |
-        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/fe-nginx:${{ github.sha }} --label dockerfile-path=frontend/Dockerfile --build-arg ENV_TYPE=${{ env.ENV_TYPE }}
+        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/fe-nginx:${{ github.sha }} --label dockerfile-path=frontend/Dockerfile --build-arg ENV_TYPE=$ENV_TYPE
         docker push ascicdacr.azurecr.io/fe-nginx:${{ github.sha }}
     - name: Build and push backend nginx image to ACR
       id: build-image2
