@@ -22,7 +22,7 @@ jobs:
     - name: Build and push frontend image to ACR
       id: build-image1
       run: |
-        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/fe-nginx:${{ github.sha }} --label dockerfile-path=frontend/Dockerfile --build-arg ENV_TYPE=$ENV_TYPE
+        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/fe-nginx:${{ github.sha }} --label dockerfile-path=frontend/Dockerfile --build-arg ENV_TYPE=${{ env.ENV_TYPE }}
         docker push ascicdacr.azurecr.io/fe-nginx:${{ github.sha }}
     - name: Build and push backend nginx image to ACR
       id: build-image2
@@ -52,7 +52,7 @@ jobs:
 
     - uses: azure/k8s-create-secret@v1
       with:
-        namespace: pipeline-${{ secrets.env_type }}
+        namespace: pipeline-${{ env.ENV_TYPE }}
         container-registry-url: ascicdacr.azurecr.io
         container-registry-username: ${{ secrets.acr_ascicdacr_username }}
         container-registry-password: ${{ secrets.acr_ascicdacr_password }}
