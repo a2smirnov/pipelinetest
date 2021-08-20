@@ -20,18 +20,18 @@ jobs:
     - name: Build and push frontend image to ACR
       id: build-image1
       run: |
-        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/fe-nginx:${{ github.sha }} --label dockerfile-path=frontend/Dockerfile --build-arg ENV_TYPE=prod
+        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/fe-nginx:${{ github.sha }} --label dockerfile-path=frontend/Dockerfile --build-arg ENV_TYPE=${{ secrets.env_type }}
         docker push ascicdacr.azurecr.io/fe-nginx:${{ github.sha }}
     - name: Build and push backend nginx image to ACR
       id: build-image2
       run: |
-        docker build "$GITHUB_WORKSPACE/backend" -f  "backend/Dockerfile-nginx" -t ascicdacr.azurecr.io/be-nginx:${{ github.sha }} --label dockerfile-path=backend/Dockerfile-nginx  --build-arg ENV_TYPE=prod
+        docker build "$GITHUB_WORKSPACE/backend" -f  "backend/Dockerfile-nginx" -t ascicdacr.azurecr.io/be-nginx:${{ github.sha }} --label dockerfile-path=backend/Dockerfile-nginx  --build-arg ENV_TYPE=${{ secrets.env_type }}
         docker push ascicdacr.azurecr.io/be-nginx:${{ github.sha }}
     - name: Build and push backend php image to ACR
       id: build-image3
       run: |
         docker build "$GITHUB_WORKSPACE/backend" -f  "backend/Dockerfile-php" -t ascicdacr.azurecr.io/be-php:${{ github.sha }} --label dockerfile-path=backend/Dockerfile-php \
-         --build-arg ENV_TYPE=prod --build-arg DB_USERNAME=${{ secrets.db_username }} --build-arg DB_PASSWORD=${{ secrets.db_password }} \
+         --build-arg ENV_TYPE=${{ secrets.env_type }} --build-arg DB_USERNAME=${{ secrets.db_username }} --build-arg DB_PASSWORD=${{ secrets.db_password }} \
          --build-arg DB_HOST=as-cicd-dbserver.mysql.database.azure.com --build-arg DB_NAME=api_db
         docker push ascicdacr.azurecr.io/be-php:${{ github.sha }}
 
@@ -42,15 +42,15 @@ jobs:
 
     - name: Create namespace
       run: |
-        namespacePresent=`kubectl get namespace | grep pipeline | wc -l`
+        namespacePresent=`kubectl get namespace | grep pipeline-${{ secrets.env_type }} | wc -l`
         if [ $namespacePresent -eq 0 ]
         then
-            echo `kubectl create namespace pipeline`
+            echo `kubectl create namespace pipeline-${{ secrets.env_type }}`
         fi
 
     - uses: azure/k8s-create-secret@v1
       with:
-        namespace: pipeline
+        namespace: pipeline-${{ secrets.env_type }}
         container-registry-url: ascicdacr.azurecr.io
         container-registry-username: ${{ secrets.acr_ascicdacr_username }}
         container-registry-password: ${{ secrets.acr_ascicdacr_password }}
@@ -58,7 +58,7 @@ jobs:
 
     - uses: azure/k8s-deploy@v1.2
       with:
-        namespace: pipeline
+        namespace: pipeline-${{ secrets.env_type }}
         manifests: |
           manifests/deployment.yml
           manifests/service.yml
