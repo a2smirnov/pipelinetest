@@ -25,7 +25,7 @@ COPY php.ini.$ENV_TYPE /usr/local/etc/php/conf.d/40-custom.ini
 # Копируем исходники в контейнер
 COPY ./api /var/www/api
 
-COPY ./api/config/settings.$ENV_TYPE /var/www/api/config/settings.ini
+COPY api/config/settings.$ENV_TYPE /var/www/api/config/settings.ini
 
 ENV ENV_TYPE=$ENV_TYPE
 ENV DB_HOST=$DB_HOST
