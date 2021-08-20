@@ -7,6 +7,8 @@ on: workflow_dispatch
 
 jobs:
   build-and-deploy:
+    env: 
+      ENV_TYPE: prod
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -20,18 +22,18 @@ jobs:
     - name: Build and push frontend image to ACR
       id: build-image1
       run: |
-        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/fe-nginx:${{ github.sha }} --label dockerfile-path=frontend/Dockerfile --build-arg ENV_TYPE=${{ secrets.env_type }}
+        docker build "$GITHUB_WORKSPACE/frontend" -f  "frontend/Dockerfile" -t ascicdacr.azurecr.io/fe-nginx:${{ github.sha }} --label dockerfile-path=frontend/Dockerfile --build-arg ENV_TYPE=${{ env.ENV_TYPE }}
         docker push ascicdacr.azurecr.io/fe-nginx:${{ github.sha }}
     - name: Build and push backend nginx image to ACR
       id: build-image2
       run: |
-        docker build "$GITHUB_WORKSPACE/backend" -f  "backend/Dockerfile-nginx" -t ascicdacr.azurecr.io/be-nginx:${{ github.sha }} --label dockerfile-path=backend/Dockerfile-nginx  --build-arg ENV_TYPE=${{ secrets.env_type }}
+        docker build "$GITHUB_WORKSPACE/backend" -f  "backend/Dockerfile-nginx" -t ascicdacr.azurecr.io/be-nginx:${{ github.sha }} --label dockerfile-path=backend/Dockerfile-nginx  --build-arg ENV_TYPE=${{ env.ENV_TYPE }}
         docker push ascicdacr.azurecr.io/be-nginx:${{ github.sha }}
     - name: Build and push backend php image to ACR
       id: build-image3
       run: |
         docker build "$GITHUB_WORKSPACE/backend" -f  "backend/Dockerfile-php" -t ascicdacr.azurecr.io/be-php:${{ github.sha }} --label dockerfile-path=backend/Dockerfile-php \
-         --build-arg ENV_TYPE=${{ secrets.env_type }} --build-arg DB_USERNAME=${{ secrets.db_username }} --build-arg DB_PASSWORD=${{ secrets.db_password }} \
+         --build-arg ENV_TYPE=${{ env.ENV_TYPE }} --build-arg DB_USERNAME=${{ secrets.db_username }} --build-arg DB_PASSWORD=${{ secrets.db_password }} \
          --build-arg DB_HOST=as-cicd-dbserver.mysql.database.azure.com --build-arg DB_NAME=api_db
         docker push ascicdacr.azurecr.io/be-php:${{ github.sha }}
 
@@ -42,10 +44,10 @@ jobs:
 
     - name: Create namespace
       run: |
-        namespacePresent=`kubectl get namespace | grep pipeline-${{ secrets.env_type }} | wc -l`
+        namespacePresent=`kubectl get namespace | grep pipeline-${{ env.ENV_TYPE }} | wc -l`
         if [ $namespacePresent -eq 0 ]
         then
-            echo `kubectl create namespace pipeline-${{ secrets.env_type }}`
+            echo `kubectl create namespace pipeline-${{ env.ENV_TYPE }}`
         fi
 
     - uses: azure/k8s-create-secret@v1
@@ -58,7 +60,7 @@ jobs:
 
     - uses: azure/k8s-deploy@v1.2
       with:
-        namespace: pipeline-${{ secrets.env_type }}
+        namespace: pipeline-${{ env.ENV_TYPE }}
         manifests: |
           manifests/deployment.yml
           manifests/service.yml
