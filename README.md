@@ -12,3 +12,5 @@ AKS_ASCICDK8S_KUBECONFIG (terraform output -raw kube_config)
 DB_PASSWORD
 
 DB_USERNAME
+
+## Aleksei Smirnov
