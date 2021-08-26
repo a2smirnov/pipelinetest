@@ -66,8 +66,8 @@ jobs:
           manifests/service.yml
           manifests/ingress.yml
         images: |
-          ascicdacr.azurecr.io/fe-nginx:${{ github.sha }}
-          ascicdacr.azurecr.io/be-nginx:${{ github.sha }}
-          ascicdacr.azurecr.io/be-php:${{ github.sha }}
+          ascicdacr.azurecr.io/${{ secrets.acr_ascicdacr_username }}/fe-nginx:${{ github.sha }}
+          ascicdacr.azurecr.io/${{ secrets.acr_ascicdacr_username }}/be-nginx:${{ github.sha }}
+          ascicdacr.azurecr.io/${{ secrets.acr_ascicdacr_username }}/be-php:${{ github.sha }}
         imagepullsecrets:
           ascicdk8sdockerauth
