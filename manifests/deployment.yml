@@ -1,9 +1,9 @@
-apiVersion : apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fe-nginx
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: fe-nginx
@@ -20,22 +20,24 @@ spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-        - name: "fe-nginx"
-          image: "ascicdacr.azurecr.io/fe-nginx"
-          ports:
-          - containerPort: 80
-          resources:
-            requests:
-              cpu: 250m
-            limits:
-              cpu: 500m
+      - name: fe-nginx
+        image: ascicdacr.azurecr.io/ascicdacr/fe-nginx
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            cpu: 500m
+            memory: 50Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: be-php
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: be-php
@@ -52,23 +54,25 @@ spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-      - name: be-php-prod
-        image: "ascicdacr.azurecr.io/be-php"
+      - name: be-php
+        image: ascicdacr.azurecr.io/ascicdacr/be-php
         ports:
         - containerPort: 9000
           name: php
         resources:
           requests:
             cpu: 250m
+            memory: 100Mi
           limits:
-            cpu: 500m
+            cpu: 250m
+            memory: 100Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: be-nginx
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: be-nginx
@@ -85,13 +89,15 @@ spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
       containers:
-      - name: be-nginx-prod
-        image: "ascicdacr.azurecr.io/be-nginx"
+      - name: be-nginx
+        image: ascicdacr.azurecr.io/ascicdacr/be-nginx
         ports:
         - containerPort: 80
           name: backend-nginx
         resources:
           requests:
-            cpu: 250m
+            cpu: 50m
+            memory: 50Mi
           limits:
-            cpu: 500m
+            cpu: 50m
+            memory: 50Mi

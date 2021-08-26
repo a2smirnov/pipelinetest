@@ -42,17 +42,17 @@ jobs:
          kubeconfig: ${{ secrets.aks_ascicdk8s_kubeConfig }}
       id: login
 
-    - name: Create namespace
+    - name: Create namespace ${{ env.ENV_TYPE }}
       run: |
-        namespacePresent=`kubectl get namespace | grep pipeline-${{ env.ENV_TYPE }} | wc -l`
+        namespacePresent=`kubectl get namespace | grep ${{ env.ENV_TYPE }} | wc -l`
         if [ $namespacePresent -eq 0 ]
         then
-            echo `kubectl create namespace pipeline-${{ env.ENV_TYPE }}`
+            echo `kubectl create namespace ${{ env.ENV_TYPE }}`
         fi
 
     - uses: azure/k8s-create-secret@v1
       with:
-        namespace: pipeline-${{ env.ENV_TYPE }}
+        namespace: ${{ env.ENV_TYPE }}
         container-registry-url: ascicdacr.azurecr.io
         container-registry-username: ${{ secrets.acr_ascicdacr_username }}
         container-registry-password: ${{ secrets.acr_ascicdacr_password }}
@@ -60,7 +60,7 @@ jobs:
 
     - uses: azure/k8s-deploy@v1.2
       with:
-        namespace: pipeline-${{ env.ENV_TYPE }}
+        namespace: ${{ env.ENV_TYPE }}
         manifests: |
           manifests/deployment.yml
           manifests/service.yml
