@@ -30,7 +30,7 @@ function showTrackerData(){
         </button>
     <!-- кнопка удаления данных из таблицы-->
         <button class='btn btn-danger m-r-10px delete-data-button'>
-            <span class='glyphicon glyphicon-remove'></span> Удаление данных из таблицы
+            <span class='glyphicon glyphicon-remove'></span> Удаление таблицы из БД
         </button>`;
     $("#page-content").html(read_data_html);
 

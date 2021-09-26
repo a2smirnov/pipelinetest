@@ -48,8 +48,8 @@ function create(){
     //Готовим запрос на создание таблицы
     $query = "CREATE TABLE `".$this->table_name."` ( ";
     $query.="id integer NOT NULL AUTO_INCREMENT, ";
-    $query.="`date_value` date NOT NULL, ";
-    $query.="`country_code` char(3) NOT NULL, ";
+    $query.="`date_value` date, ";
+    $query.="`country_code` char(3), ";
     $query.="`confirmed` integer NOT NULL, ";
     $query.="`deaths` integer NOT NULL, ";
     $query.="`stringency_actual` float, ";
@@ -104,6 +104,16 @@ function update(){
         foreach ($obj->data as $data => $values) {
             foreach ($values as $country => $country_data) {
                 if (in_array($country, $this->countries)) {
+                    if (is_null($country_data->confirmed)) {
+                        $confirmed="0";
+                    } else {
+                        $confirmed=$country_data->confirmed;
+                    }
+                    if (is_null($country_data->deaths)) {
+                        $deaths="0";
+                    } else {
+                        $deaths=$country_data->deaths;
+                    }
                     if (is_null($country_data->stringency)) {
                         $stringency="NULL";
                     } else {
@@ -114,7 +124,7 @@ function update(){
                     } else {
                         $stringency_actual=$country_data->stringency_actual;
                     }                    
-                $query .= "('".$data."', '".$country."', ".$country_data->confirmed.", ".$country_data->deaths.", ".$stringency_actual.", ".$stringency."),";
+                $query .= "('".$data."', '".$country."', ".$confirmed.", ".$deaths.", ".$stringency_actual.", ".$stringency."),";
                 }
             }
 
@@ -126,14 +136,15 @@ function update(){
     // выполняем запрос 
     return $stmt->execute();
 }
-// метод delete - удаление данных их таблицы 
+// метод delete - удаление таблицы
 function delete(){
-    //Готовим запрос на удаление данных
-    $query = "DELETE FROM `".$this->table_name."`";
+    //Готовим запрос на удаление таблицы
+    //    $query = "DELETE FROM `".$this->table_name."`";
+    $query = "DROP TABLE IF EXISTS `".$this->table_name."`";
     // подготовка запроса 
     $stmt = $this->conn->prepare($query);
 
-    // удаляем данные и возвращаем результат
+    // удаляем таблицу и возвращаем результат
     return $stmt->execute();
 }
 }
