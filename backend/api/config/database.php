@@ -10,12 +10,7 @@ class Database {
 
     // получаем соединение с БД 
     public function getConnection(){
-	if (getenv('ENV_TYPE', true)) {
-        $config = parse_ini_file("../config/settings.".getenv('ENV_TYPE', true), true);
-	} else {
-        $config = parse_ini_file("../config/settings.ini", true);
-        }
-        $this->conn = null;
+	    $this->conn = null;
         $this->host = getenv('DB_HOST', true);
         $this->db_name = getenv('DB_NAME', true);
         $this->username = getenv('DB_USERNAME', true);

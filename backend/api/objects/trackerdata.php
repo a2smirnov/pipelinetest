@@ -5,7 +5,6 @@ class TrackerData {
     private $conn;
     private $table_name;
     private $db_engine;
-    private $db_encoding;
     private $data_source;
     private $countries;
 
@@ -76,7 +75,6 @@ function update(){
         if ($num>0) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $start_date = $row["date_value"];
-//            echo("Update: last day data found! ".$start_date);
         }
     }
     //удаляем данные последнего дня (возможно они были изменены после последнего забора)
@@ -86,14 +84,6 @@ function update(){
     // привязываем дату
     $stmt->bindParam(1, $start_date);
     // выполняем запрос 
-    if ($stmt->execute()) {
-//        echo("Update: last day data deleted!");
-    } else {
-//        echo("Last day deletion failed ".$query);
-    }
-
-//  удаляем все существующие данные перед обновлением
-//    $this->delete();
     //читаем ранее не считанные данные из api
     $data_source_full = $this->data_source."/".$start_date."/".$end_date;
     ini_set("allow_url_fopen", 1);
@@ -104,26 +94,10 @@ function update(){
         foreach ($obj->data as $data => $values) {
             foreach ($values as $country => $country_data) {
                 if (in_array($country, $this->countries)) {
-                    if (is_null($country_data->confirmed)) {
-                        $confirmed="0";
-                    } else {
-                        $confirmed=$country_data->confirmed;
-                    }
-                    if (is_null($country_data->deaths)) {
-                        $deaths="0";
-                    } else {
-                        $deaths=$country_data->deaths;
-                    }
-                    if (is_null($country_data->stringency)) {
-                        $stringency="NULL";
-                    } else {
-                        $stringency=$country_data->stringency;
-                    }
-                    if (is_null($country_data->stringency_actual)) {
-                        $stringency_actual="NULL";
-                    } else {
-                        $stringency_actual=$country_data->stringency_actual;
-                    }                    
+                    $confirmed=is_null($country_data->confirmed) ? "0" : $country_data->confirmed;
+                    $deaths=is_null($country_data->deaths) ? "0" : $country_data->deaths;
+                    $stringency=is_null($country_data->stringency) ? "0" : $country_data->stringency;
+                    $stringency_actual=is_null($country_data->stringency_actual) ? "0" : $country_data->stringency_actual;
                 $query .= "('".$data."', '".$country."', ".$confirmed.", ".$deaths.", ".$stringency_actual.", ".$stringency."),";
                 }
             }
@@ -139,7 +113,6 @@ function update(){
 // метод delete - удаление таблицы
 function delete(){
     //Готовим запрос на удаление таблицы
-    //    $query = "DELETE FROM `".$this->table_name."`";
     $query = "DROP TABLE IF EXISTS `".$this->table_name."`";
     // подготовка запроса 
     $stmt = $this->conn->prepare($query);
