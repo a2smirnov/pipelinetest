@@ -2,7 +2,7 @@ jQuery(function($){
 
     // вставляем календарь с ограничением диапазона дат от 01 января текущего года по текущую дату
     $("#datepicker").datepicker({
-    minDate: new Date(new Date().getFullYear(), 1 - 1, 1),
+    minDate: new Date(new Date().getFullYear(), 0, 1),
     maxDate: new Date(),
     dateFormat: "yy-mm-dd"
     });
