@@ -18,13 +18,13 @@ jQuery(function($){
         }
     },
     callback: function (result) {
-        if (result==true) {
+        if (result) {
 
             // отправим запрос на обновление в API / удаленный сервер 
             $.ajax({
                 url: config.api_url+"create.php",
                 type : "POST",
-                success : function(result) {
+                success : function() {
         
                     // отображаем данные 
                     showTrackerData();

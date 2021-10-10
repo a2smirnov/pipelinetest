@@ -18,7 +18,7 @@ jQuery(function($){
 // функция для вывода данных трекера 
 function showTrackerData(){
 
-    read_data_html=`
+    let read_data_html=`
     <!-- кнопки 'действий' -->
     <!-- кнопка обновления данных -->
         <button class='btn btn-primary update-data-button'>
